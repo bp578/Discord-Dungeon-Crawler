@@ -22,9 +22,12 @@ async def ping(ctx):
 async def repeat(ctx, arg):
 	await ctx.send(arg)
 @bot.command()
-async def help(ctx, help_message="ng: Begin a new game eg: End current game stats: Display your current stats"):
-	user = ctx.author
-	await user.send(help_message)
+async def help(ctx):
+  text = """ ng: Begin a new game 
+eg: End current game 
+stats: Display your current stats"""
+  user = ctx.author
+  await user.send(text)
 
 token = "OTM4OTY5NDk3MTI0MDg1ODQx.YfyBfQ.smaJcZWXYUp8J5Dv82yH9sH2CUU"
 bot.run(token)  # Starts the bot
