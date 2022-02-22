@@ -1,5 +1,5 @@
 import os
-from discord.ext import commands
+from discord.ext import commands, tasks
 import discord
 from gamestate import GameState
 
@@ -20,7 +20,7 @@ async def on_ready():
 @bot.event
 async def on_reaction_add(reaction, user):
 	if user != bot.user:
-		state.handle_reaction(reaction)
+		await state.handle_reaction(reaction)
 
 
 @bot.command()
@@ -39,15 +39,19 @@ stats: Display your current stats
 
 @bot.command()
 async def ng(ctx):
-	await ctx.reply("A new adventure begins in a dark dungeon...")
+	start_msg = await ctx.reply("A new adventure begins in a dark dungeon...")
 	# start encounter
-	encounter_msg = await ctx.send("You encounter a savage goblin")
-	state.new_encounter(ctx.author, encounter_msg)
+	encounter_msg = await ctx.send("You have come upon a savage beast...")
+	if not state.new_encounter(ctx.author, encounter_msg):
+		await start_msg.edit(content="You are already in an encounter....")
+		await encounter_msg.delete()
 
 @bot.command()
 async def eg(ctx):
-	await ctx.reply("You have cut your own life short. Better luck on your next adventure.")
-	state.close_encounter(ctx.author)
+	if state.close_encounter(ctx.author):
+		await ctx.reply("You have cut your own life short. Better luck on your next adventure.")
+	else:
+		await ctx.reply("You are not currently in an encounter...")
 
 @bot.command()
 async def stats(ctx):
@@ -59,5 +63,13 @@ SPD: 5
 	"""
 	await ctx.reply(text)
 
+@tasks.loop(seconds=5.0)
+async def updates():
+	await state.run_updates()
+@updates.before_loop
+async def before_updates():
+	await bot.wait_until_ready()
+
+updates.start()
 token = "OTM4OTY5NDk3MTI0MDg1ODQx.YfyBfQ.smaJcZWXYUp8J5Dv82yH9sH2CUU"
 bot.run(token)
