@@ -53,15 +53,45 @@ async def eg(ctx):
 	else:
 		await ctx.reply("You are not currently in an encounter...")
 
+player_data = {}
+
+data = {
+  "HP:": 100,
+  "ATK:": 5,
+  "DEF:": 5,
+  "SPD:": 5,
+  "STR:": 5,
+  "INT:": 0,
+  "REG:": 0,
+  "RMP:": 0,
+}
+
+@bot.command()
+async def delete_register(ctx):
+  if ctx.author in player_data.keys():
+    player_data.pop(ctx.author)
+    await ctx.reply("Data successfully deleted")
+  else:
+    await ctx.reply("You didn't register yet!")
+
+@bot.command()
+async def register(ctx):
+  if ctx.author in player_data.keys():
+    await ctx.reply("You already registered before")
+  else:
+    player_data[ctx.author] = data
+    await ctx.reply("You successfully registered")
+
 @bot.command()
 async def stats(ctx):
-	text = """
-HP: 100  
-ATK: 5
-DEF: 5
-SPD: 5
-	"""
-	await ctx.reply(text)
+  if ctx.author in player_data.keys():
+    data = player_data[ctx.author]
+    string = ""
+    for key, val in data.items():
+      string += key + str(val) + "\n"
+    await ctx.reply(string)
+  else:
+    await ctx.reply("You need to register first")
 
 @tasks.loop(seconds=5.0)
 async def updates():
@@ -71,5 +101,5 @@ async def before_updates():
 	await bot.wait_until_ready()
 
 updates.start()
-token = "OTM4OTY5NDk3MTI0MDg1ODQx.YfyBfQ.smaJcZWXYUp8J5Dv82yH9sH2CUU"
+token = os.getenv("TOKEN")
 bot.run(token)
