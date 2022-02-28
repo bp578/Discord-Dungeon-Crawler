@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from discord.ext import commands, tasks
 import discord
 from gamestate import GameState
@@ -68,5 +70,5 @@ async def before_updates(self):
 	await bot.wait_until_ready()
 
 state.run_updates.start()
-token = "OTM4OTY5NDk3MTI0MDg1ODQx.YfyBfQ.smaJcZWXYUp8J5Dv82yH9sH2CUU"
+token = os.getenv("TOKEN")
 bot.run(token)
