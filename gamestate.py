@@ -20,9 +20,9 @@ class GameState:
 		self.reaction_handlers[message] = callback
 	def del_reaction_handler(self, message: discord.Message):
 		self.reaction_handlers.pop(message)
-	async def handle_reaction(self, reaction):
+	async def handle_reaction(self, reaction, user):
 		if reaction.message in self.reaction_handlers:
-			await self.reaction_handlers[reaction.message](reaction)
+			await self.reaction_handlers[reaction.message](reaction, user)
 	
 	def new_encounter(self, player: discord.Member, msg: discord.Message):
 		# if player is already in an encounter, return false
@@ -68,8 +68,8 @@ class Encounter:
 		self.last_action = "Make your move"
 		self.state = state
 	
-	async def handle_reaction(self, reaction):
-		if await reaction.users().find(lambda u : u == self.player):
+	async def handle_reaction(self, reaction, user):
+		if user == self.player:
 			if reaction.emoji == "👊":
 				await self.player_hit()
 				await reaction.remove(self.player)

@@ -22,7 +22,7 @@ async def on_ready():
 @bot.event
 async def on_reaction_add(reaction, user):
 	if user != bot.user:
-		await state.handle_reaction(reaction)
+		await state.handle_reaction(reaction, user)
 
 
 @bot.command()
