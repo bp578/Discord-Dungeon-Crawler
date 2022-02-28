@@ -18,6 +18,8 @@ class GameState:
 
 	def add_reaction_handler(self, message: discord.Message, callback):
 		self.reaction_handlers[message] = callback
+	def del_reaction_handler(self, message: discord.Message):
+		self.reaction_handlers.pop(message)
 	async def handle_reaction(self, reaction):
 		if reaction.message in self.reaction_handlers:
 			await self.reaction_handlers[reaction.message](reaction)
@@ -38,7 +40,7 @@ class GameState:
 			if encounter.player == player:
 				found = True
 				self.running_encounters.remove(encounter)
-				self.reaction_handlers.pop(encounter.msg)
+				self.del_reaction_handler(encounter.msg)
 				self.updates.remove(encounter.update)
 		return found
 
