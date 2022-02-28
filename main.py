@@ -63,13 +63,10 @@ SPD: 5
 	"""
 	await ctx.reply(text)
 
-@tasks.loop(seconds=5.0)
-async def updates():
-	await state.run_updates()
-@updates.before_loop
-async def before_updates():
+@state.run_updates.before_loop
+async def before_updates(self):
 	await bot.wait_until_ready()
 
-updates.start()
+state.run_updates.start()
 token = "OTM4OTY5NDk3MTI0MDg1ODQx.YfyBfQ.smaJcZWXYUp8J5Dv82yH9sH2CUU"
 bot.run(token)

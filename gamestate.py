@@ -1,13 +1,17 @@
 import discord
+from discord.ext import tasks
 
+# store state; basically all data
 class GameState:
 	def __init__(self):
-		self.updates = []
-		self.reaction_handlers = {}
-		self.running_encounters = []
+		self.updates = [] # list of callbacks (functions) that are run every 5 seconds. use state.register_update(cb) to add an update function
+		self.reaction_handlers = {} # dictionary of message to callback (function). callback is run every time a reaction appears on that message.
+		self.running_encounters = [] # list of encounters that are currently running. contains instances of Encounter class
 
+	# add function to list of update functions
 	def register_update(self, cb):
 		self.updates.append(cb)
+	@tasks.loop(seconds=5.0)
 	async def run_updates(self):
 		for update in self.updates:
 			await update()
