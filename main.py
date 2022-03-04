@@ -25,7 +25,7 @@ async def on_reaction_add(reaction, user):
 	if user != bot.user:
 		await state.handle_reaction(reaction, user)
 
-<<<<<<< HEAD
+
 @bot.command(profile=['user'])
 async def profile(ctx,member : discord.Member):
     embed = discord.Embed(title = member.name, color = discord.Color.blue())
@@ -33,16 +33,6 @@ async def profile(ctx,member : discord.Member):
     embed.set_thumbnail(url = member.avatar_url)
     await ctx.send(embed=embed)
 
-=======
-@bot.command(profile=['user']}
-async def profile(ctx,member : discord.Member):
-    embed = discord.Embed(title = member.name, color = discord.Color.blue())
-    embed.add_field(name = "ID", value = member.id, inline = true)
-    embed.set_thumbnail(url = member.avatar_url)
-    await ctx.send(embed=embed)
-	
->>>>>>> 1522adf0f01947c442bf0e34d5e8e9a16f20b549
-	
 @bot.command()
 async def ping(ctx):
 	await ctx.reply("pong!")
@@ -59,50 +49,50 @@ stats: Display your current stats
 
 @bot.command()
 async def ng(ctx):
-  async def beginGame():
-    start_msg = await ctx.reply("A new adventure begins in a dark dungeon...")
-	  # start encounter
-    encounter_msg = await ctx.send("You have come upon a savage beast...")
-    if not state.new_encounter(ctx.author, encounter_msg):
-      await start_msg.edit(content="You are already in an encounter....")
-      await encounter_msg.delete()
-    
-  classSelectContents = '''React to pick your class:
+	async def beginGame():
+		start_msg = await ctx.reply("A new adventure begins in a dark dungeon...")
+		# start encounter
+		encounter_msg = await ctx.send("You have come upon a savage beast...")
+		if not state.new_encounter(ctx.author, encounter_msg):
+			await start_msg.edit(content="You are already in an encounter....")
+			await encounter_msg.delete()
+
+	classSelectContents = '''React to pick your class:
    1. Warrior ⚔️
    2. Mage ✨
    3. Rogue 🗡
    4. Tank 🛡️
    5. Marksman 🏹
-  '''
-  classSelectMsg = await ctx.send(classSelectContents)
-  await classSelectMsg.add_reaction("⚔️")
-  await classSelectMsg.add_reaction("✨")
-  await classSelectMsg.add_reaction("🗡")
-  await classSelectMsg.add_reaction("🛡️")
-  await classSelectMsg.add_reaction("🏹")
-  async def check(reaction, user):
-    if user == ctx.author and reaction.emoji in ["⚔️","✨","🗡","🛡️","🏹"]:
-      if reaction.emoji == "⚔️":
-        await ctx.send("You picked: Warrior")
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Warrior"
-      elif reaction.emoji == "✨":
-        await ctx.send("You picked: Mage")
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Mage"
-      elif reaction.emoji == "🗡":
-        await ctx.send("You picked: Rogue")
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Rogue"
-      elif reaction.emoji == "🛡️":
-        await ctx.send("You picked: Tank")
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Tank"
-      elif reaction.emoji == "🏹":
-        await ctx.send("You picked: Marksman")
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Marksman"
-  state.add_reaction_handler(classSelectMsg, check)
+	'''
+	classSelectMsg = await ctx.send(classSelectContents)
+	await classSelectMsg.add_reaction("⚔️")
+	await classSelectMsg.add_reaction("✨")
+	await classSelectMsg.add_reaction("🗡")
+	await classSelectMsg.add_reaction("🛡️")
+	await classSelectMsg.add_reaction("🏹")
+	async def check(reaction, user):
+		if user == ctx.author and reaction.emoji in ["⚔️","✨","🗡","🛡️","🏹"]:
+			if reaction.emoji == "⚔️":
+				await ctx.send("You picked: Warrior")
+				await beginGame()
+				gamestate.PLAYER_CLASS = "Warrior"
+			elif reaction.emoji == "✨":
+				await ctx.send("You picked: Mage")
+				await beginGame()
+				gamestate.PLAYER_CLASS = "Mage"
+			elif reaction.emoji == "🗡":
+				await ctx.send("You picked: Rogue")
+				await beginGame()
+				gamestate.PLAYER_CLASS = "Rogue"
+			elif reaction.emoji == "🛡️":
+				await ctx.send("You picked: Tank")
+				await beginGame()
+				gamestate.PLAYER_CLASS = "Tank"
+			elif reaction.emoji == "🏹":
+				await ctx.send("You picked: Marksman")
+				await beginGame()
+				gamestate.PLAYER_CLASS = "Marksman"
+	state.add_reaction_handler(classSelectMsg, check)
 
 @bot.command()
 async def eg(ctx):
@@ -128,4 +118,3 @@ async def before_updates(self):
 state.run_updates.start()
 token = os.getenv("TOKEN")
 bot.run(token)
-
