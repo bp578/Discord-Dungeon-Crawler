@@ -50,6 +50,7 @@ ENCOUNTER_INFO = """
  - HP: {2}
  - DMG: {3}
 {0}:
+ - CLASS: {7}
  - HP: {4}
  - DMG: {5}
 {6}
@@ -58,6 +59,7 @@ ENEMY_BASE_HP = 20
 PLAYER_BASE_HP = 100
 ENEMY_DMG = 1
 PLAYER_DMG = 5
+PLAYER_CLASS = "???"
 class Encounter:
 	def __init__(self, player: discord.Member, msg: discord.Message, state: GameState):
 		self.activated = False
@@ -92,6 +94,7 @@ class Encounter:
 			self.player_hp,
 			PLAYER_DMG,
 			self.last_action
+			PLAYER_CLASS
 		)
 		await self.msg.edit(content=text)
 	
