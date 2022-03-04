@@ -93,7 +93,7 @@ class Encounter:
 			ENEMY_DMG,
 			self.player_hp,
 			PLAYER_DMG,
-			self.last_action
+			self.last_action,
 			PLAYER_CLASS
 		)
 		await self.msg.edit(content=text)
