@@ -30,6 +30,35 @@ async def profile(ctx,member : discord.Member):
     embed.add_field(name = "ID", value = member.id, inline = True)
     embed.set_thumbnail(url = member.avatar_url)
     await ctx.send(embed=embed)
+
+@bot.command()
+async def selectClass(ctx):
+	classSelectContents = '''Enter a number to pick your class:
+	1. Warrior :crossed_swords:
+	2. Mage :sparkles:
+	3. Rogue :dagger:
+	4. Tank :shield:
+	5. Marksman :bow_and_arrow:
+	'''
+	classSelectMsg = await ctx.send(classSelectContents)
+	async def check(reaction, user):
+		if user == ctx.author and reaction.emoji in ["⚔️","✨","🗡️","🛡️","🏹"]:
+			if reaction.emoji == "⚔️":
+				await ctx.send("You picked: Warrior")
+				gamestate.PLAYER_CLASS = "Warrior"
+			elif reaction.emoji == "✨":
+				await ctx.send("You picked: Mage")
+				gamestate.PLAYER_CLASS = "Mage"
+			elif reaction.emoji == "🗡️":
+				await ctx.send("You picked: Rogue")
+				gamestate.PLAYER_CLASS = "Rogue"
+			elif reaction.emoji == "🛡️ ":
+				await ctx.send("You picked: Tank")
+				gamestate.PLAYER_CLASS = "Tank"
+			elif reaction.emoji == "🏹":
+				await ctx.send("You picked: Marksman")
+				gamestate.PLAYER_CLASS = "Marksman"
+	state.add_reaction_handler(classSelectMsg, check)
 	
 @bot.command()
 async def ping(ctx):
