@@ -24,6 +24,7 @@ async def on_reaction_add(reaction, user):
 	if user != bot.user:
 		await state.handle_reaction(reaction, user)
 
+<<<<<<< HEAD
 @bot.command(profile=['user'])
 async def profile(ctx,member : discord.Member):
     embed = discord.Embed(title = member.name, color = discord.Color.blue())
@@ -31,6 +32,15 @@ async def profile(ctx,member : discord.Member):
     embed.set_thumbnail(url = member.avatar_url)
     await ctx.send(embed=embed)
 
+=======
+@bot.command(profile=['user']}
+async def profile(ctx,member : discord.Member):
+    embed = discord.Embed(title = member.name, color = discord.Color.blue())
+    embed.add_field(name = "ID", value = member.id, inline = true)
+    embed.set_thumbnail(url = member.avatar_url)
+    await ctx.send(embed=embed)
+	
+>>>>>>> 1522adf0f01947c442bf0e34d5e8e9a16f20b549
 @bot.command()
 async def selectClass(ctx):
 	classSelectContents = '''Enter a number to pick your class:
