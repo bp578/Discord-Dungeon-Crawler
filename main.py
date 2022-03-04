@@ -24,10 +24,10 @@ async def on_reaction_add(reaction, user):
 	if user != bot.user:
 		await state.handle_reaction(reaction, user)
 
-@bot.command(profile=['user']}
+@bot.command(profile=['user'])
 async def profile(ctx,member : discord.Member):
     embed = discord.Embed(title = member.name, color = discord.Color.blue())
-    embed.add_field(name = "ID", value = member.id, inline = true)
+    embed.add_field(name = "ID", value = member.id, inline = True)
     embed.set_thumbnail(url = member.avatar_url)
     await ctx.send(embed=embed)
 	
