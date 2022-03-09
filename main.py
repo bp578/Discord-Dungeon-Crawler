@@ -123,7 +123,7 @@ data = {
 
 @bot.command()
 async def delete_register(ctx):
-    if ctx.author in state.get_players():
+    if str(ctx.author.id) in state.players:
         state.delete_player_data(ctx.author)
         await ctx.reply("Data successfully deleted")
     else:
@@ -131,7 +131,7 @@ async def delete_register(ctx):
 
 @bot.command()
 async def register(ctx):
-    if str(ctx.author.id) in state.get_players():
+    if str(ctx.author.id) in state.players:
         await ctx.reply("You already registered before")
     else:
         state.change_player_data(ctx.author, data)
@@ -140,7 +140,7 @@ async def register(ctx):
 @bot.command()
 async def stats(ctx):
 	# check if player has registered
-    if str(ctx.author.id) in state.get_players():
+    if str(ctx.author.id) in state.players:
 		# get data
         data = state.get_player_data(ctx.author)
 		# format data into string

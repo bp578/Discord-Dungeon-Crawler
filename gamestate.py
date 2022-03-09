@@ -75,9 +75,6 @@ class GameState:
 				}
 				return data
 
-	def get_players(self):
-		return self.players
-
 	# add function to list of update functions
 	def register_update(self, cb):
 		self.updates.append(cb)
