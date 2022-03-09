@@ -1,5 +1,6 @@
 import discord
 from discord.ext import tasks
+import random
 
 # store state; basically all data
 class GameState:
@@ -140,7 +141,7 @@ class Encounter:
 				await self.player_hit()
 				await reaction.remove(self.player)
 			if reaction.emoji == "✌️":
-				await self.leave_encounter()
+				await self.leave_encounter(self.player.mention + " peaced out ✌️")
 
 	async def update(self):
 		if not self.activated:
@@ -169,6 +170,6 @@ class Encounter:
 	async def enemy_hit(self):
 		self.player_hp -= ENEMY_DMG
 
-	async def leave_encounter(self):
+	async def leave_encounter(self, msg):
 		self.state.close_encounter(self.player)
-		await self.msg.edit(content=self.player.mention + " peaced out ✌️")
+		await self.msg.edit(content=msg)
