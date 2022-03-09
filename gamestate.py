@@ -7,6 +7,70 @@ class GameState:
 		self.updates = [] # list of callbacks (functions) that are run every 5 seconds. use state.register_update(cb) to add an update function
 		self.reaction_handlers = {} # dictionary of message to callback (function). callback is run every time a reaction appears on that message.
 		self.running_encounters = [] # list of encounters that are currently running. contains instances of Encounter class
+        self.players = []
+        lines = []
+        with open("player_data.txt", "r") as file:
+            lines = file.readlines()
+        for line in lines:
+            player_id = line.split(" ")[0]
+            self.players.append(player_id)
+
+    def change_player_data(self, player, data):
+        data = " ".join([str(val) for val in data.values()])
+        id = str(player.id)
+        lines = []
+        with open("player_data.txt", "r") as file:
+            lines = file.readlines()
+        found = False
+        for i in range(len(lines)):
+            other_id = lines[i].split(" ")[0]
+            if other_id == id:
+                lines[i] = id + " " + data + "\n"
+                with open("player_data.txt", "w") as file:
+                    file.writelines(lines)
+                found = True
+        if not found:
+            with open("player_data.txt", "a") as file:
+                file.write(id + " " + data + "\n")
+		
+    def delete_player_data(self, player):
+        self.players.remove(player)
+        id = str(player.id)
+        lines = []
+        with open("player_data.txt", "r") as file:
+            lines = file.readlines()
+        
+        with open("player_data.txt", "w") as file:
+            for line in lines:
+                other_id = line.split(" ")[0]
+                if other_id != id:
+                    file.write(line)
+
+    def get_player_data(self, player):
+      	# update from file
+        lines = []
+        with open("player_data.txt", "r") as file:
+            lines = file.readlines()
+        for line in lines:
+            numbers = line.split(" ")
+            other_id = numbers[0]
+            print(other_id)
+            print(player.id)
+            if other_id == str(player.id):
+                data = {
+                    "HP:": numbers[1],
+                    "ATK:": numbers[2],
+                    "DEF:": numbers[3],
+                    "SPD:": numbers[4],
+                    "STR:": numbers[5],
+                    "INT:": numbers[6],
+                    "REG:": numbers[7],
+                    "RMP:": numbers[8],
+                }
+                return data
+
+    def get_players(self):
+        return self.players
 
 	# add function to list of update functions
 	def register_update(self, cb):
@@ -23,7 +87,7 @@ class GameState:
 	async def handle_reaction(self, reaction, user):
 		if reaction.message in self.reaction_handlers:
 			await self.reaction_handlers[reaction.message](reaction, user)
-	
+
 	def new_encounter(self, player: discord.Member, msg: discord.Message):
 		# if player is already in an encounter, return false
 		for encounter in self.running_encounters:
@@ -69,7 +133,7 @@ class Encounter:
 		self.enemy_hp = ENEMY_BASE_HP
 		self.last_action = "Make your move"
 		self.state = state
-	
+
 	async def handle_reaction(self, reaction, user):
 		if user == self.player:
 			if reaction.emoji == "👊":
@@ -77,7 +141,7 @@ class Encounter:
 				await reaction.remove(self.player)
 			if reaction.emoji == "✌️":
 				await self.leave_encounter()
-	
+
 	async def update(self):
 		if not self.activated:
 			self.activated = True
@@ -97,14 +161,14 @@ class Encounter:
 			PLAYER_CLASS
 		)
 		await self.msg.edit(content=text)
-	
+
 	async def player_hit(self):
 		self.enemy_hp -= PLAYER_DMG
 		self.last_action = self.player.mention + " hit Goblin for " + str(PLAYER_DMG) + " HP!"
 		await self.update_text()
 	async def enemy_hit(self):
 		self.player_hp -= ENEMY_DMG
-	
+
 	async def leave_encounter(self):
 		self.state.close_encounter(self.player)
 		await self.msg.edit(content=self.player.mention + " peaced out ✌️")

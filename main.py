@@ -110,8 +110,6 @@ async def eg(ctx):
 	else:
 		await ctx.reply("You are not currently in an encounter...")
 
-player_data = {}
-
 data = {
   "HP:": 100,
   "ATK:": 5,
@@ -125,30 +123,33 @@ data = {
 
 @bot.command()
 async def delete_register(ctx):
-  if ctx.author in player_data.keys():
-    player_data.pop(ctx.author)
-    await ctx.reply("Data successfully deleted")
-  else:
-    await ctx.reply("You didn't register yet!")
+    if ctx.author in state.get_players():
+        state.delete_player_data(ctx.author)
+        await ctx.reply("Data successfully deleted")
+    else:
+        await ctx.reply("You didn't register yet!")
 
 @bot.command()
 async def register(ctx):
-  if ctx.author in player_data.keys():
-    await ctx.reply("You already registered before")
-  else:
-    player_data[ctx.author] = data
-    await ctx.reply("You successfully registered")
+    if str(ctx.author.id) in state.get_players():
+        await ctx.reply("You already registered before")
+    else:
+        state.change_player_data(ctx.author, data)
+        await ctx.reply("You successfully registered")
 
 @bot.command()
 async def stats(ctx):
-  if ctx.author in player_data.keys():
-    data = player_data[ctx.author]
-    string = ""
-    for key, val in data.items():
-      string += key + str(val) + "\n"
-    await ctx.reply(string)
-  else:
-    await ctx.reply("You need to register first")
+	# check if player has registered
+    if str(ctx.author.id) in state.get_players():
+		# get data
+        data = state.get_player_data(ctx.author)
+		# format data into string
+        string = ""
+        for key, val in data.items():
+            string += key + str(val) + "\n"
+        await ctx.reply(string)
+    else:
+        await ctx.reply("You need to register with `!register` first")
 
 @state.run_updates.before_loop
 async def before_updates(self):
