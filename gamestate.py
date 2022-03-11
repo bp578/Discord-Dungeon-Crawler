@@ -167,10 +167,16 @@ class Encounter:
 
 	async def player_hit(self):
 		self.enemy_hp -= PLAYER_DMG
-		self.last_action = self.player.mention + " hit Goblin for " + str(PLAYER_DMG) + " HP!"
-		await self.update_text()
+		if self.enemy_hp <= 0:
+      items = ["health potion", "health potion", "mana potion"]
+    	item = items[random.rand_range(0,3)]
+			self.leave_encounter("You have slain the beast and gained: " + item)
+		else:
+			self.last_action = self.player.mention + " hit Goblin for " + str(PLAYER_DMG) + " HP!"
+			await self.update_text()
 	async def enemy_hit(self):
 		self.player_hp -= ENEMY_DMG
+		
 
 	async def leave_encounter(self, msg):
 		self.state.close_encounter(self.player)
