@@ -39,13 +39,16 @@ async def ping(ctx):
 
 @bot.command()
 async def help(ctx):
-	text = """
+    embed = discord.Embed(title = "Need help?", color = discord.Color.blue(), description = """
 ng: Begin a new game 
 eg: End current game 
 stats: Display your current stats
-	"""
+	""")
+	
+	embed.add_field(name = "Help",value = member.id,  inline = True) 
+    embed.set_author(name="Discord Bot Game", icon_url="https://icon-library.com/images/new-discord-icon/new-discord-icon-19.jpg")
 	user = ctx.author
-	await user.send(text)
+	await user.send(embed=embed)
 
 @bot.command()
 async def ng(ctx):
