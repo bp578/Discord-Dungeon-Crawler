@@ -128,32 +128,32 @@ ENEMY_DMG = 1
 PLAYER_DMG = 5
 PLAYER_CLASS = "???"
 class Encounter:
-	def __init__(self, player: discord.Member, msg: discord.Message, state: GameState):
-		self.activated = False
-		self.msg = msg
-		self.player = player
-		self.player_hp = PLAYER_BASE_HP
-		self.enemy_hp = ENEMY_BASE_HP
-		self.last_action = "Make your move"
-		self.state = state
+  def __init__(self, player: discord.Member, msg: discord.Message, state: GameState):
+    self.activated = False
+    self.msg = msg
+    self.player = player
+    self.player_hp = PLAYER_BASE_HP
+    self.enemy_hp = ENEMY_BASE_HP
+    self.last_action = "Make your move"
+    self.state = state
 
-	async def handle_reaction(self, reaction, user):
-		if user == self.player:
-			if reaction.emoji == "👊":
-				await self.player_hit()
-				await reaction.remove(self.player)
-			if reaction.emoji == "✌️":
-				await self.leave_encounter(self.player.mention + " peaced out ✌️")
+  async def handle_reaction(self, reaction, user):
+	  if user == self.player:
+		  if reaction.emoji == "👊":
+			  await self.player_hit()
+			  await reaction.remove(self.player)
+		  if reaction.emoji == "✌️":
+			  await self.leave_encounter(self.player.mention + " peaced out ✌️")
 
-	async def update(self):
-		if not self.activated:
-			self.activated = True
-			await self.update_text()
-			await self.msg.add_reaction("👊")
-			await self.msg.add_reaction("✌️")
+  async def update(self):
+	  if not self.activated:
+		  self.activated = True
+		  await self.update_text()
+		  await self.msg.add_reaction("👊")
+		  await self.msg.add_reaction("✌️")
 
-	async def update_text(self):
-		text = ENCOUNTER_INFO.format(
+  async def update_text(self):
+	  text = ENCOUNTER_INFO.format(
 				self.player.mention,
 				"Goblin",
 				self.enemy_hp,
@@ -163,21 +163,21 @@ class Encounter:
 				self.last_action,
 				PLAYER_CLASS
 		)
-		await self.msg.edit(content=text)
+	  await self.msg.edit(content=text)
 
-	async def player_hit(self):
-		self.enemy_hp -= PLAYER_DMG
-		if self.enemy_hp <= 0:
+  async def player_hit(self):
+    self.enemy_hp -= PLAYER_DMG
+    if self.enemy_hp <= 0:
       items = ["health potion", "health potion", "mana potion"]
-    	item = items[random.rand_range(0,3)]
-			self.leave_encounter("You have slain the beast and gained: " + item)
-		else:
-			self.last_action = self.player.mention + " hit Goblin for " + str(PLAYER_DMG) + " HP!"
-			await self.update_text()
-	async def enemy_hit(self):
-		self.player_hp -= ENEMY_DMG
+      item = items[random.randrange(0,3)]
+      await self.leave_encounter("You have slain the beast and gained: " + item)
+    else:
+      self.last_action = self.player.mention + " hit Goblin for " + str(PLAYER_DMG) + " HP!"
+      await self.update_text()
+  async def enemy_hit(self):
+    self.player_hp -= ENEMY_DMG
 		
 
-	async def leave_encounter(self, msg):
-		self.state.close_encounter(self.player)
-		await self.msg.edit(content=msg)
+  async def leave_encounter(self, msg):
+	  self.state.close_encounter(self.player)
+	  await self.msg.edit(content=msg)
