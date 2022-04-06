@@ -39,16 +39,16 @@ async def ping(ctx):
 
 @bot.command()
 async def help(ctx):
-    embed = discord.Embed(title = "Need help?", color = discord.Color.blue(), description = """
+  embed = discord.Embed(title = "Need help?", color = discord.Color.blue(), description = """
 ng: Begin a new game 
 eg: End current game 
 stats: Display your current stats
 	""")
 	
-	embed.add_field(name = "Help",value = member.id,  inline = True) 
-    embed.set_author(name="Discord Bot Game", icon_url="https://icon-library.com/images/new-discord-icon/new-discord-icon-19.jpg")
-	user = ctx.author
-	await user.send(embed=embed)
+  embed.add_field(name = "Help",value = member.id,  inline = True)
+  embed.set_author(name="Discord Bot Game", icon_url="https://icon-library.com/images/new-discord-icon/new-discord-icon-19.jpg")
+  user = ctx.author
+  await user.send(embed=embed)
 
 @bot.command()
 async def ng(ctx):
@@ -159,5 +159,5 @@ async def before_updates(self):
 	await bot.wait_until_ready()
 
 state.run_updates.start()
-token = os.getenv("TOKEN")
+token = "OTYxMDU2OTkyMjEyOTQyODY5.YkzcEg.XeS5Z_ao08bDEBHCUHE1z1OoYkY"
 bot.run(token)
