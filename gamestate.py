@@ -1,4 +1,5 @@
 import discord
+import time
 from discord.ext import tasks
 import random
 
@@ -138,11 +139,13 @@ class Encounter:
     self.state = state
 
   async def handle_reaction(self, reaction, user):
-	  if user == self.player:
-		  if reaction.emoji == "👊":
-			  await self.player_hit()
-			  await reaction.remove(self.player)
-		  if reaction.emoji == "✌️":
+    if user == self.player:
+      if reaction.emoji == "👊":
+        await self.player_hit()
+        time.sleep(3)
+        await reaction.remove(self.player)
+        await self.enemy_hit()
+    if reaction.emoji == "✌️":
 			  await self.leave_encounter(self.player.mention + " peaced out ✌️")
 
   async def update(self):
@@ -168,14 +171,18 @@ class Encounter:
   async def player_hit(self):
     self.enemy_hp -= PLAYER_DMG
     if self.enemy_hp <= 0:
-      items = ["health potion", "health potion", "mana potion"]
+      items = ["health potion", "gold", "mana potion"]
       item = items[random.randrange(0,3)]
       await self.leave_encounter("You have slain the beast and gained: " + item)
     else:
       self.last_action = self.player.mention + " hit Goblin for " + str(PLAYER_DMG) + " HP!"
       await self.update_text()
   async def enemy_hit(self):
-    self.player_hp -= ENEMY_DMG
+    if self.enemy_hp > 0:
+      self.player_hp -= ENEMY_DMG
+      self.last_action = "Goblin" + " hit " + self.player.mention + " for " + str(ENEMY_DMG) + " HP!"
+      await self.update_text()
+    
 		
 
   async def leave_encounter(self, msg):
