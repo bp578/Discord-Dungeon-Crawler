@@ -140,7 +140,7 @@ class Enemy:
   def getDMG(self):
     return self.DMG
 
-#Instantiate e a random enemy object.
+#Instantiate a random enemy object.
 def randEnemy():
   goblin = Enemy("Goblin", 20, 1)
   ogre = Enemy("Ogre", 30, 10)
@@ -151,7 +151,6 @@ def randEnemy():
   enemyList = [goblin, ogre, skeleton, rat, spider]
   enemy = enemyList[random.randrange(len(enemyList))]
   return enemy
-
 
 PLAYER_BASE_HP = 100
 PLAYER_DMG = 5
