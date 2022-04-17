@@ -140,20 +140,7 @@ class Enemy:
   def getDMG(self):
     return self.DMG
 
-  #setters
-  def setHP(self, newHP):
-    self.HP = newHP
-
-  #Take Damage and Deal Damage methods
-  def takeDMG(self, DMG):
-    oldHP = self.getHP()
-    newHP = oldHP - DMG
-    self.setHP(newHP)
-
-  def dealDMG(self):
-    pass
-
-#Instantiate an enemy object
+#Instantiate e a random enemy object.
 def randEnemy():
   goblin = Enemy("Goblin", 20, 1)
   ogre = Enemy("Ogre", 30, 10)
@@ -164,11 +151,12 @@ def randEnemy():
   enemyList = [goblin, ogre, skeleton, rat, spider]
   enemy = enemyList[random.randrange(len(enemyList))]
   return enemy
-#enemy = randEnemy()
+
 
 PLAYER_BASE_HP = 100
 PLAYER_DMG = 5
 PLAYER_CLASS = "???"
+
 class Encounter:
   def __init__(self, player: discord.Member, msg: discord.Message, state: GameState, enemy):
     self.activated = False
@@ -220,6 +208,7 @@ class Encounter:
     else:
       self.last_action = self.player.mention + " hit " + self.enemy_name + " for " + str(PLAYER_DMG) + " HP!"
       await self.update_text()
+
   async def enemy_hit(self):
     if self.enemy_hp > 0:
       self.player_hp -= self.enemy_dmg
