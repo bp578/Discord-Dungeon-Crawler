@@ -124,6 +124,70 @@ data = {
   "RMP:": 0,
 }
 
+async def bag(ctx):
+    def __init__(self, level = 1):
+        self.level = 1
+        self.contents = list()
+        self.qties = list() 
+  	
+    return
+    def inBag(self, itemName):
+        
+        pos = None
+        found = False
+        if len(self.contents) > 0:
+            i = 0
+            while not found and i < len(self.contents): 
+                found = itemName.lower() == self.contents[i].getName().lower()
+                if not found: 
+                    i += 1
+        if found: 
+            pos = i
+        return pos
+    def putIn(self, item, qty):
+       
+        added = False
+        if len(self.contents) < self.size:
+            pos = self.inBag(item.getName())
+            if pos != None: 
+                self.qties[pos] += 1
+            else:
+                self.contents.append(item) 
+                self.qties.append(qty) 
+            added = True
+        return added
+    def getContentsSize(self):
+        return len(self.contents)
+    def getSize(self):
+        return self.size
+    def isFull(self):
+        return self.getContentsSize() == self.size
+    def getItemAt(self, pos):
+        
+        return self.contents[pos]
+    def getQtyAt(self, pos):
+        
+        return self.qties[pos]
+    def takeOut(self, itemName, qty):
+        
+        takenOut = None
+        pos = self.inBag(itemName)
+        if pos != None:
+            if qty <= self.qties[pos]: 
+                takenOut = self.contents[pos] 
+                self.qties[pos] -= qty 
+            else:
+                takenOut = "You don't have enough of that." 
+            if self.qties[pos] == 0: 
+               
+                del self.contents[pos]
+                del self.qties[pos]
+        return takenOut
+    def availableInBag(self):
+        '''Returns a sample the contents of the bag as a list of "item" objects.
+        Will be used to loot monsters.'''
+        return self.contents
+
 @bot.command()
 async def delete_register(ctx):
     if str(ctx.author.id) in state.players:
