@@ -4,6 +4,7 @@ load_dotenv()
 from discord.ext import commands, tasks
 import discord
 import gamestate
+import enemyImages as ei
 from gamestate import GameState
 
 bot = commands.Bot(
@@ -25,6 +26,30 @@ async def on_reaction_add(reaction, user):
 	if user != bot.user:
 		await state.handle_reaction(reaction, user)
 
+@bot.command()
+async def image(ctx):
+  await ctx.send(file=discord.File('monster_images/goblin.jpg'))
+
+@bot.command()
+async def embed(ctx):
+  embed = discord.Embed(title="Old embed")
+  embed.set_image(url='https://i.imgur.com/NkJ9Gjz.jpg')
+  #embed.set_image(url=ei.ogreImage)
+  #msg = await ctx.send(embed=embed)
+  msg = await ctx.send(embed=embed)
+  newEmbed = discord.Embed(title="new embed")
+  newEmbed.set_image(url='https://i.imgur.com/6fTUU3Z.jpeg')
+  await msg.edit(embed=newEmbed)
+  #newEmbed = discord.Embed(title = "A new embed")
+  #await msg.edit(embed=newEmbed)
+  #newEmbed = discord.Embed(title = "A new embed")
+  #newEmbed.set_thumbnail(url='attachment://goblin.jpg')
+  #await msg.edit(file=file, embed=newEmbed)
+  
+  
+  
+  
+  
 
 @bot.command(profile=['user'])
 async def profile(ctx,member : discord.Member):
@@ -35,7 +60,7 @@ async def profile(ctx,member : discord.Member):
 
 @bot.command()
 async def ping(ctx):
-	await ctx.reply("pong!")
+	await ctx.reply("`pong!`")
 
 @bot.command()
 async def help(ctx):
@@ -54,12 +79,15 @@ stats: Display your current stats
 async def ng(ctx):
   #beginGame is called once the player picks a class. 
   async def beginGame():
-	  start_msg = await ctx.reply("A new adventure begins in a dark dungeon...")
-	  # start encounter
-	  encounter_msg = await ctx.send("You have come upon a savage beast...")
-	  if not state.new_encounter(ctx.author, encounter_msg):
-		  await start_msg.edit(content="You are already in an encounter....")
-		  await encounter_msg.delete()
+    state.newEnemy()
+    start_msg = await ctx.reply("A new adventure begins in a dark dungeon...")
+    # start encounter
+    encounter_embed = discord.Embed(title = f"{ctx.author.display_name} has initiated an encounter", description = "You have come upon a savage beast...", color = discord.Color.red())
+    encounter_embed.set_image(url=ei.dungeonImage)
+    encounter_msg = await ctx.send(embed=encounter_embed)
+    if not state.new_encounter(ctx.author, encounter_msg):
+      await start_msg.edit(content="You are already in an encounter....")
+      await encounter_msg.delete()
 
   classSelectContents = '''React to pick your class:
    1. Warrior ⚔️
