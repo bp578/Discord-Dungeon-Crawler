@@ -1,6 +1,4 @@
 import os
-from dotenv import load_dotenv
-load_dotenv()
 from discord.ext import commands, tasks
 import discord
 import gamestate
@@ -26,31 +24,6 @@ async def on_reaction_add(reaction, user):
 	if user != bot.user:
 		await state.handle_reaction(reaction, user)
 
-@bot.command()
-async def image(ctx):
-  await ctx.send(file=discord.File('monster_images/goblin.jpg'))
-
-@bot.command()
-async def embed(ctx):
-  embed = discord.Embed(title="Old embed")
-  embed.set_image(url='https://i.imgur.com/NkJ9Gjz.jpg')
-  #embed.set_image(url=ei.ogreImage)
-  #msg = await ctx.send(embed=embed)
-  msg = await ctx.send(embed=embed)
-  newEmbed = discord.Embed(title="new embed")
-  newEmbed.set_image(url='https://i.imgur.com/6fTUU3Z.jpeg')
-  await msg.edit(embed=newEmbed)
-  #newEmbed = discord.Embed(title = "A new embed")
-  #await msg.edit(embed=newEmbed)
-  #newEmbed = discord.Embed(title = "A new embed")
-  #newEmbed.set_thumbnail(url='attachment://goblin.jpg')
-  #await msg.edit(file=file, embed=newEmbed)
-  
-  
-  
-  
-  
-
 @bot.command(profile=['user'])
 async def profile(ctx,member : discord.Member):
     embed = discord.Embed(title = member.name, color = discord.Color.blue())
@@ -68,9 +41,10 @@ async def help(ctx):
 ng: Begin a new game 
 eg: End current game 
 stats: Display your current stats
+register: store your stats and in-game progress so that your progress saves between each encounter
 	""")
 	
-  embed.add_field(name = "Help",value = member.id,  inline = True)
+  embed.add_field(name = "Note", value = "Remember that \"!\" precedes every command",  inline = True)
   embed.set_author(name="Discord Bot Game", icon_url="https://icon-library.com/images/new-discord-icon/new-discord-icon-19.jpg")
   user = ctx.author
   await user.send(embed=embed)
@@ -253,3 +227,4 @@ async def before_updates(self):
 state.run_updates.start()
 token = "OTYxMDU2OTkyMjEyOTQyODY5.YkzcEg.XeS5Z_ao08bDEBHCUHE1z1OoYkY"
 bot.run(token)
+
