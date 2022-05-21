@@ -41,16 +41,17 @@ async def help(ctx):
 ng: Begin a new game 
 eg: End current game 
 stats: Display your current stats
-register: store your stats and in-game progress so that your progress saves between each encounter
 	""")
 	
-  embed.add_field(name = "Note", value = "Remember that \"!\" precedes every command",  inline = True)
+  embed.add_field(name = "Help",value = member.id,  inline = True)
   embed.set_author(name="Discord Bot Game", icon_url="https://icon-library.com/images/new-discord-icon/new-discord-icon-19.jpg")
   user = ctx.author
   await user.send(embed=embed)
 
 @bot.command()
 async def ng(ctx):
+  userData = state.get_player_data(ctx.author)
+  
   #beginGame is called once the player picks a class. 
   async def beginGame():
     state.newEnemy()
@@ -63,51 +64,66 @@ async def ng(ctx):
       await start_msg.edit(content="You are already in an encounter....")
       await encounter_msg.delete()
 
-  classSelectContents = '''React to pick your class:
-   1. Warrior ⚔️
-   2. Mage ✨
-   3. Rogue 🗡
-   4. Tank 🛡️
-   5. Marksman 🏹
-  '''
-  #classSelectMsg is the first thing sent upon starting a new game.
-  classSelectMsg = await ctx.send(classSelectContents)
-  await classSelectMsg.add_reaction("⚔️")
-  await classSelectMsg.add_reaction("✨")
-  await classSelectMsg.add_reaction("🗡")
-  await classSelectMsg.add_reaction("🛡️")
-  await classSelectMsg.add_reaction("🏹")
+  async def chooseClass():
+    classSelectContents = '''React to pick your class:
+      1. Warrior ⚔️
+      2. Mage ✨
+      3. Rogue 🗡
+      4. Tank 🛡️
+      5. Marksman 🏹
+    '''
+    #classSelectMsg is the first thing sent upon starting a new game.
+    classSelectMsg = await ctx.send(classSelectContents)
+    await classSelectMsg.add_reaction("⚔️")
+    await classSelectMsg.add_reaction("✨")
+    await classSelectMsg.add_reaction("🗡")
+    await classSelectMsg.add_reaction("🛡️")
+    await classSelectMsg.add_reaction("🏹")
+    
+    #This function checks what emoji the player reacted with and changes their class accordingly
+    async def check(reaction, user):
+      if user == ctx.author and reaction.emoji in ["⚔️","✨","🗡","🛡️","🏹"]:
+        userData = state.get_player_data(user)
+        if reaction.emoji == "⚔️":
+          await ctx.send("You picked: Warrior")
+          await classSelectMsg.delete()
+          userData["CLASS: "] = "Warrior"
+          state.change_player_data(user, userData)
+          await beginGame()
+        elif reaction.emoji == "✨":
+          await ctx.send("You picked: Mage")
+          await classSelectMsg.delete()
+          userData["CLASS: "] = "Mage"
+          state.change_player_data(user, userData)
+          await beginGame()
+        elif reaction.emoji == "🗡":
+          await ctx.send("You picked: Rogue")
+          await classSelectMsg.delete()
+          userData["CLASS: "] = "Rogue"
+          state.change_player_data(user, userData)
+          await beginGame()
+        elif reaction.emoji == "🛡️":
+          await ctx.send("You picked: Tank")
+          await classSelectMsg.delete()
+          userData["CLASS: "] = "Tank"
+          state.change_player_data(user, userData)
+          await beginGame()
+        elif reaction.emoji == "🏹":
+          await ctx.send("You picked: Marksman")
+          await classSelectMsg.delete()
+          userData["CLASS: "] = "Marksman"
+          state.change_player_data(user, userData)
+          await beginGame()
+    state.add_reaction_handler(classSelectMsg, check)
+    
 
-  #This function checks what emoji the player reacted with and changes their class accordingly
-  async def check(reaction, user):
-    if user == ctx.author and reaction.emoji in ["⚔️","✨","🗡","🛡️","🏹"]:
-      if reaction.emoji == "⚔️":
-        await ctx.send("You picked: Warrior")
-        await classSelectMsg.delete()
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Warrior"
-      elif reaction.emoji == "✨":
-        await ctx.send("You picked: Mage")
-        await classSelectMsg.delete()
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Mage"
-      elif reaction.emoji == "🗡":
-        await ctx.send("You picked: Rogue")
-        await classSelectMsg.delete()
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Rogue"
-      elif reaction.emoji == "🛡️":
-        await ctx.send("You picked: Tank")
-        await classSelectMsg.delete()
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Tank"
-      elif reaction.emoji == "🏹":
-        await ctx.send("You picked: Marksman")
-        await classSelectMsg.delete()
-        await beginGame()
-        gamestate.PLAYER_CLASS = "Marksman"
-  state.add_reaction_handler(classSelectMsg, check)
+  if userData["CLASS: "] == "???":
+    await chooseClass()
+  else:
+    await beginGame()
 
+  
+  
 @bot.command()
 async def eg(ctx):
 	if state.close_encounter(ctx.author):
@@ -116,14 +132,18 @@ async def eg(ctx):
 		await ctx.reply("You are not currently in an encounter...")
 
 data = {
-  "HP:": 100,
-  "ATK:": 5,
-  "DEF:": 5,
-  "SPD:": 5,
-  "STR:": 5,
-  "INT:": 0,
-  "REG:": 0,
-  "RMP:": 0,
+  #Player Stats. These parameters can be improved via leveling up and equipment
+  "CLASS: ": "???",
+  "HP: ": 100,
+  "ATK: ": 5,
+  "DEF: ": 5,
+  "SPD: ": 5,
+  "STR: ": 5,
+  "INT: ": 0,
+
+  #Player Status. The current state of the player. 
+  #For example, a player's current HP may be lower than their HP because of a battle with a monster.
+  "CurrentHP: ": 100
 }
 
 async def bag(ctx):
