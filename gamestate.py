@@ -71,12 +71,14 @@ class GameState:
       print(player.id)
       if other_id == str(player.id):
         data = {
-						"HP:": numbers[1],
-						"ATK:": numbers[2],
-						"DEF:": numbers[3],
-						"SPD:": numbers[4],
-						"STR:": numbers[5],
-						"INT:": numbers[6],
+            "CLASS: ": numbers[1],
+						"HP: ": numbers[2],
+						"ATK: ": numbers[3],
+						"DEF: ": numbers[4],
+						"SPD: ": numbers[5],
+						"STR: ": numbers[6],
+						"INT: ": numbers[7],
+            "CurrentHP: ": numbers[8]
 				}
         return data
 
@@ -153,14 +155,15 @@ def randEnemy():
 
 PLAYER_BASE_HP = 100
 PLAYER_DMG = 5
-PLAYER_CLASS = "???"
+#PLAYER_CLASS = "???"
 
 class Encounter:
   def __init__(self, player: discord.Member, msg: discord.Message, state: GameState, enemy):
     self.activated = False
     self.msg = msg
     self.player = player
-    self.player_hp = PLAYER_BASE_HP
+    self.playerData = state.get_player_data(player)
+    self.player_hp = int(self.playerData["CurrentHP: "])
     self.enemy_name = enemy.getName()
     self.enemy_hp = enemy.getHP()
     self.enemy_dmg = enemy.getDMG()
@@ -187,7 +190,7 @@ class Encounter:
 
   async def update_text(self):    
     userStats = f'''
-CLASS: `{PLAYER_CLASS}`
+CLASS: `{self.playerData["CLASS: "]}`
 HP: `{self.player_hp}`
 DMG: `{PLAYER_DMG}`
     '''
@@ -217,11 +220,13 @@ DMG: `{self.enemy_dmg}`
   async def enemy_hit(self):
     if self.enemy_hp > 0:
       self.player_hp -= self.enemy_dmg
+      self.playerData["CurrentHP: "] = self.player_hp
       self.last_action = self.enemy_name + " hit " + self.player.mention + " for " + str(self.enemy_dmg) + " HP!"
       await self.update_text()
     
 		
 
   async def leave_encounter(self, embed):
-	  self.state.close_encounter(self.player)
-	  await self.msg.edit(embed=embed)
+    self.state.change_player_data(self.player, self.playerData)
+    self.state.close_encounter(self.player)
+    await self.msg.edit(embed=embed)
