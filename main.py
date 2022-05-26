@@ -41,12 +41,14 @@ async def help(ctx):
 ng: Begin a new game 
 eg: End current game 
 stats: Display your current stats
+register: store your stats and in-game progress so that your progress saves between each encounter
 	""")
 	
-  embed.add_field(name = "Help",value = member.id,  inline = True)
+  embed.add_field(name = "Note", value = "Remember that \"!\" precedes every command",  inline = True)
   embed.set_author(name="Discord Bot Game", icon_url="https://icon-library.com/images/new-discord-icon/new-discord-icon-19.jpg")
   user = ctx.author
   await user.send(embed=embed)
+
 
 @bot.command()
 async def ng(ctx):
@@ -83,36 +85,30 @@ async def ng(ctx):
     #This function checks what emoji the player reacted with and changes their class accordingly
     async def check(reaction, user):
       if user == ctx.author and reaction.emoji in ["⚔️","✨","🗡","🛡️","🏹"]:
-        userData = state.get_player_data(user)
         if reaction.emoji == "⚔️":
           await ctx.send("You picked: Warrior")
           await classSelectMsg.delete()
-          userData["CLASS: "] = "Warrior"
-          state.change_player_data(user, userData)
+          state.startWarrior(user)
           await beginGame()
         elif reaction.emoji == "✨":
           await ctx.send("You picked: Mage")
           await classSelectMsg.delete()
-          userData["CLASS: "] = "Mage"
-          state.change_player_data(user, userData)
+          state.startMage(user)
           await beginGame()
         elif reaction.emoji == "🗡":
           await ctx.send("You picked: Rogue")
           await classSelectMsg.delete()
-          userData["CLASS: "] = "Rogue"
-          state.change_player_data(user, userData)
+          state.startRogue(user)
           await beginGame()
         elif reaction.emoji == "🛡️":
           await ctx.send("You picked: Tank")
           await classSelectMsg.delete()
-          userData["CLASS: "] = "Tank"
-          state.change_player_data(user, userData)
+          state.startTank(user)
           await beginGame()
         elif reaction.emoji == "🏹":
           await ctx.send("You picked: Marksman")
           await classSelectMsg.delete()
-          userData["CLASS: "] = "Marksman"
-          state.change_player_data(user, userData)
+          state.startMarksman(user)
           await beginGame()
     state.add_reaction_handler(classSelectMsg, check)
     
@@ -126,10 +122,11 @@ async def ng(ctx):
   
 @bot.command()
 async def eg(ctx):
-	if state.close_encounter(ctx.author):
-		await ctx.reply("You have cut your own life short. Better luck on your next adventure.")
-	else:
-		await ctx.reply("You are not currently in an encounter...")
+  if state.close_encounter(ctx.author):
+    await ctx.reply("You have cut your own life short. Better luck on your next adventure.")
+    state.change_player_data(ctx.author, data)
+  else:
+    await ctx.reply("You are not currently in an encounter...")
 
 data = {
   #Player Stats. These parameters can be improved via leveling up and equipment
